@@ -15,6 +15,13 @@ export function formatNow(): string {
   return new Date().toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" });
 }
 
+export function formatRelativeTime(iso: string): string {
+  const diffMin = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000);
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin} min ago`;
+  return `${Math.floor(diffMin / 60)}h ago`;
+}
+
 export function getDirection(heading: number): string {
   if (heading === 511) return "—";
   const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];

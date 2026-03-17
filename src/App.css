@@ -104,10 +104,32 @@ body {
   padding: 24px 0 14px;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .title {
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.3px;
+}
+
+.watch-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.watch-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .subtitle {
@@ -228,6 +250,94 @@ body {
   flex-shrink: 0;
   min-width: 52px;
   text-align: right;
+}
+
+/* ── Last Seen ── */
+.ship-lastseen {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Nav Status Badge ── */
+.ship-status-badge {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
+/* ── Watch Mode ── */
+.watch-mode {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.watch-mode-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.watch-mode-inner {
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.watch-mode-emoji {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.watch-mode-name {
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.watch-mode-status {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.watch-mode-distance {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.watch-mode-meta {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.watch-mode-destination {
+  font-size: 14px;
+  color: var(--text-muted);
 }
 
 /* ── Expanded Details ── */

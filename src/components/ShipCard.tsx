@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { ShipData } from "../types";
 import { getShipTypeInfo } from "../utils/shipTypes";
-import { formatDistance, formatSpeed, getDirection } from "../utils/format";
+import { formatDistance, formatSpeed, formatRelativeTime, getDirection } from "../utils/format";
 import { flagFromMmsi } from "../utils/flag";
-import { navStatusLabel } from "../utils/navStatus";
+import { navStatusLabel, navStatusShort } from "../utils/navStatus";
 import { resolveDestination } from "../utils/ports";
 
 interface Props {
@@ -17,6 +17,7 @@ export function ShipCard({ ship, isNearest }: Props) {
   const direction = getDirection(ship.heading);
   const flag = flagFromMmsi(ship.mmsi);
   const status = navStatusLabel(ship.navStatus);
+  const statusBadge = navStatusShort(ship.navStatus);
   const destination = resolveDestination(ship.destination);
 
   return (
@@ -31,11 +32,13 @@ export function ShipCard({ ship, isNearest }: Props) {
         <span className="ship-name">
           {flag && <span className="ship-flag">{flag}</span>}
           {ship.name || "Unknown"}
+          {statusBadge && <span className="ship-status-badge">{statusBadge}</span>}
         </span>
         <span className="ship-direction">{direction}</span>
         <span className="ship-speed">{formatSpeed(ship.speed)}</span>
         <span className="ship-distance mono">{formatDistance(ship.distance)}</span>
       </div>
+      <div className="ship-lastseen">{formatRelativeTime(ship.lastUpdate)}</div>
 
       {expanded && (
         <div className="ship-card-details">
@@ -68,7 +71,6 @@ export function ShipCard({ ship, isNearest }: Props) {
             <span className="detail-label">MMSI</span>
             <span className="detail-value mono">{ship.mmsi}</span>
           </div>
-
         </div>
       )}
     </div>

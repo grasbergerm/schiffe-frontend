@@ -3,9 +3,11 @@ import { FILTER_OPTIONS } from "../utils/shipTypes";
 interface Props {
   active: string;
   onChange: (value: string) => void;
+  movingOnly: boolean;
+  onMovingOnlyChange: (v: boolean) => void;
 }
 
-export function FilterBar({ active, onChange }: Props) {
+export function FilterBar({ active, onChange, movingOnly, onMovingOnlyChange }: Props) {
   return (
     <div className="filter-bar">
       {FILTER_OPTIONS.map((opt) => (
@@ -17,6 +19,12 @@ export function FilterBar({ active, onChange }: Props) {
           {opt.label}
         </button>
       ))}
+      <button
+        className={`filter-pill${movingOnly ? " filter-pill-active" : ""}`}
+        onClick={() => onMovingOnlyChange(!movingOnly)}
+      >
+        ⚡ Moving
+      </button>
     </div>
   );
 }

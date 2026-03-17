@@ -13,7 +13,7 @@ interface UseShipsReturn {
   error: string | null;
 }
 
-export function useShips(filter: string, location: Location): UseShipsReturn {
+export function useShips(filter: string, location: Location, movingOnly: boolean): UseShipsReturn {
   const [ships, setShips] = useState<ShipData[]>([]);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,12 +47,13 @@ export function useShips(filter: string, location: Location): UseShipsReturn {
     };
   }, [location.lat, location.lon]);
 
-  const filtered = useMemo(
-    () => filter === "all"
+  const filtered = useMemo(() => {
+    let result = filter === "all"
       ? ships
-      : ships.filter((s) => getShipTypeInfo(s.shipType).category === filter),
-    [ships, filter]
-  );
+      : ships.filter((s) => getShipTypeInfo(s.shipType).category === filter);
+    if (movingOnly) result = result.filter((s) => s.speed >= 0.5);
+    return result;
+  }, [ships, filter, movingOnly]);
 
   return { ships: filtered, meta, isLoading, error };
 }

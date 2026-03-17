@@ -1,0 +1,293 @@
+/* ── Tokens ── */
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-card: #ffffff;
+  --border: #e5e5e5;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --accent: #2563eb;
+  --accent-muted: rgba(37, 99, 235, 0.1);
+  --cargo: #059669;
+  --cargo-muted: rgba(5, 150, 105, 0.1);
+  --tanker: #ea580c;
+  --tanker-muted: rgba(234, 88, 12, 0.1);
+  --passenger: #2563eb;
+  --passenger-muted: rgba(37, 99, 235, 0.1);
+  --other: #6b7280;
+  --other-muted: rgba(107, 114, 128, 0.1);
+  --error: #dc2626;
+  --error-bg: rgba(220, 38, 38, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-card: #1a1a1a;
+    --border: #2a2a2a;
+    --text-primary: #e5e5e5;
+    --text-secondary: #a0a0a0;
+    --text-muted: #666666;
+    --accent: #60a5fa;
+    --accent-muted: rgba(96, 165, 250, 0.1);
+    --cargo: #34d399;
+    --cargo-muted: rgba(52, 211, 153, 0.1);
+    --tanker: #fb923c;
+    --tanker-muted: rgba(251, 146, 60, 0.1);
+    --passenger: #60a5fa;
+    --passenger-muted: rgba(96, 165, 250, 0.1);
+    --other: #9ca3af;
+    --other-muted: rgba(156, 163, 175, 0.1);
+    --error: #f87171;
+    --error-bg: rgba(248, 113, 113, 0.08);
+  }
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mono {
+  font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+}
+
+/* ── Layout ── */
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
+  min-height: 100vh;
+}
+
+/* ── Status Bar ── */
+.status-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-green  { background: #22c55e; }
+.dot-yellow { background: #eab308; }
+.dot-red    { background: var(--error); }
+
+/* ── Header ── */
+.header {
+  padding: 24px 0 14px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* ── Filter Bar ── */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  padding: 0 0 16px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+
+.filter-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.filter-pill-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Ship List ── */
+.ship-list {
+  padding: 0 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Ship Card ── */
+.ship-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  user-select: none;
+}
+
+.ship-card:hover {
+  border-color: var(--text-muted);
+}
+
+.ship-card-nearest {
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+}
+
+.ship-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.type-pill {
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.type-pill-cargo     { background: var(--cargo-muted); }
+.type-pill-tanker    { background: var(--tanker-muted); }
+.type-pill-passenger { background: var(--passenger-muted); }
+.type-pill-other     { background: var(--other-muted); }
+
+.ship-name {
+  flex: 1;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ship-flag {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.ship-direction {
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.ship-speed {
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.ship-distance {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 52px;
+  text-align: right;
+}
+
+/* ── Expanded Details ── */
+.ship-card-details {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.detail-label {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* ── States ── */
+.loading,
+.empty-state {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 16px;
+  background: var(--bg);
+}
+
+.error-state-inner {
+  max-width: 320px;
+  text-align: center;
+}
+
+.error-state-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.error-state-body {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

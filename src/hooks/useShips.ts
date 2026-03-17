@@ -5,6 +5,8 @@ import { getShipTypeInfo } from "../utils/shipTypes";
 const API_URL = import.meta.env.VITE_API_URL;
 const POLL_INTERVAL_MS = 15_000;
 
+interface Location { lat: number; lon: number; }
+
 interface UseShipsReturn {
   ships: ShipData[];
   meta: ApiMeta | null;
@@ -12,7 +14,7 @@ interface UseShipsReturn {
   error: string | null;
 }
 
-export function useShips(filter: string): UseShipsReturn {
+export function useShips(filter: string, location: Location): UseShipsReturn {
   const [ships, setShips] = useState<ShipData[]>([]);
   const [meta, setMeta] = useState<ApiMeta | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +26,7 @@ export function useShips(filter: string): UseShipsReturn {
 
     async function fetchShips() {
       try {
-        const res = await fetch(`${API_URL}/ships`);
+        const res = await fetch(`${API_URL}/ships?lat=${location.lat}&lon=${location.lon}`);
         if (!res.ok) throw new Error(`Server error (${res.status})`);
 
         const data: ApiResponse = await res.json();
@@ -58,7 +60,7 @@ export function useShips(filter: string): UseShipsReturn {
       cancelled = true;
       clearInterval(interval);
     };
-  }, []);
+  }, [location.lat, location.lon]);
 
   const filtered = filter === "all"
     ? ships

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useGeolocation } from "./hooks/useGeolocation";
 import { useShips } from "./hooks/useShips";
 import { StatusBar } from "./components/StatusBar";
 import { FilterBar } from "./components/FilterBar";
@@ -7,7 +8,8 @@ import { ErrorState } from "./components/ErrorState";
 
 export default function App() {
   const [filter, setFilter] = useState("all");
-  const { ships, meta, isLoading, error } = useShips(filter);
+  const { location, locationName } = useGeolocation();
+  const { ships, meta, isLoading, error } = useShips(filter, location);
 
   const neverLoaded = isLoading && !meta;
 
@@ -19,7 +21,7 @@ export default function App() {
       <div className="app">
         <header className="header">
           <h1 className="title">Schiffe</h1>
-          <p className="subtitle">Elbe · Blankenese</p>
+          <p className="subtitle">{locationName}</p>
         </header>
         <FilterBar active={filter} onChange={setFilter} />
         {isLoading && !meta ? (

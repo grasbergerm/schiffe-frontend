@@ -14,7 +14,7 @@ interface Props {
 export function ShipCard({ ship, isNearest }: Props) {
   const [expanded, setExpanded] = useState(false);
   const typeInfo = getShipTypeInfo(ship.shipType);
-  const direction = getDirection(ship.heading, ship.lon);
+  const direction = getDirection(ship.heading);
   const flag = flagFromMmsi(ship.mmsi);
   const status = navStatusLabel(ship.navStatus);
 

@@ -10,10 +10,21 @@ interface UseGeolocationReturn {
 
 const BLANKENESE: Location = { lat: 53.5565, lon: 9.8063 };
 const BLANKENESE_NAME = "Elbe · Blankenese";
+const GEO_TIMEOUT_MS = 8_000;
+
+async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), GEO_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 async function reversegeocode(lat: number, lon: number): Promise<string> {
   const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
-  const res = await fetch(url, { headers: { "Accept-Language": "en" } });
+  const res = await fetchWithTimeout(url, { headers: { "Accept-Language": "en" } });
   if (!res.ok) throw new Error("Nominatim error");
   const data = await res.json();
   const addr = data.address ?? {};
@@ -22,7 +33,7 @@ async function reversegeocode(lat: number, lon: number): Promise<string> {
 
 async function nearestWaterway(lat: number, lon: number): Promise<string> {
   const query = `[out:json][timeout:5];way[waterway~"^(river|canal)$"][name](around:1000,${lat},${lon});out tags 1;`;
-  const res = await fetch("https://overpass-api.de/api/interpreter", {
+  const res = await fetchWithTimeout("https://overpass-api.de/api/interpreter", {
     method: "POST",
     body: query,
   });

@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import type { ShipData, ApiMeta, ApiResponse } from "../types";
 import { getShipTypeInfo } from "../utils/shipTypes";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const POLL_INTERVAL_MS = 15_000;
 
 interface Location { lat: number; lon: number; }
 
@@ -22,49 +21,38 @@ export function useShips(filter: string, location: Location): UseShipsReturn {
   const hasEverLoaded = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
+    const source = new EventSource(
+      `${API_URL}/ships/stream?lat=${location.lat}&lon=${location.lon}`
+    );
 
-    async function fetchShips() {
-      try {
-        const res = await fetch(`${API_URL}/ships?lat=${location.lat}&lon=${location.lon}`);
-        if (!res.ok) throw new Error(`Server error (${res.status})`);
+    source.onmessage = (event) => {
+      const data: ApiResponse = JSON.parse(event.data);
+      hasEverLoaded.current = true;
+      setShips(data.ships);
+      setMeta(data.meta);
+      setError(null);
+      setIsLoading(false);
+    };
 
-        const data: ApiResponse = await res.json();
-
-        if (cancelled) return;
-
-        hasEverLoaded.current = true;
-        setShips(data.ships);
-        setMeta(data.meta);
-        setError(null);
+    source.onerror = () => {
+      setError("Unable to reach the server");
+      if (!hasEverLoaded.current) {
         setIsLoading(false);
-      } catch (err) {
-        if (cancelled) return;
-
-        const msg = err instanceof Error && err.message.startsWith("Server error")
-          ? err.message
-          : "Unable to reach the server";
-
-        setError(msg);
-        if (!hasEverLoaded.current) {
-          setIsLoading(false);
-        }
-        // Keep last known ships if we have them
       }
-    }
-
-    fetchShips();
-    const interval = setInterval(fetchShips, POLL_INTERVAL_MS);
+      // EventSource auto-reconnects; keep last known ships
+    };
 
     return () => {
-      cancelled = true;
-      clearInterval(interval);
+      source.close();
     };
   }, [location.lat, location.lon]);
 
-  const filtered = filter === "all"
-    ? ships
-    : ships.filter((s) => getShipTypeInfo(s.shipType).category === filter);
+  const filtered = useMemo(
+    () => filter === "all"
+      ? ships
+      : ships.filter((s) => getShipTypeInfo(s.shipType).category === filter),
+    [ships, filter]
+  );
 
   return { ships: filtered, meta, isLoading, error };
 }

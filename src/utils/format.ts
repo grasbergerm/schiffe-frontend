@@ -8,11 +8,11 @@ export function formatSpeed(knots: number): string {
 
 export function formatTime(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" });
 }
 
 export function formatNow(): string {
-  return new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString(navigator.language, { hour: "2-digit", minute: "2-digit" });
 }
 
 export function getDirection(heading: number): string {

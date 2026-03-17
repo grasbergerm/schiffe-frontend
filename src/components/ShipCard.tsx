@@ -17,6 +17,7 @@ export function ShipCard({ ship, isNearest }: Props) {
   const direction = getDirection(ship.heading);
   const flag = flagFromMmsi(ship.mmsi);
   const status = navStatusLabel(ship.navStatus);
+  const destination = resolveDestination(ship.destination);
 
   return (
     <div
@@ -44,10 +45,10 @@ export function ShipCard({ ship, isNearest }: Props) {
               <span className="detail-value">{status}</span>
             </div>
           )}
-          {resolveDestination(ship.destination) && (
+          {destination && (
             <div className="detail-row">
               <span className="detail-label">Destination</span>
-              <span className="detail-value">{resolveDestination(ship.destination)}</span>
+              <span className="detail-value">{destination}</span>
             </div>
           )}
           <div className="detail-row">

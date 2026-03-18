@@ -18,26 +18,33 @@ export function WatchMode({ ship, onClose }: Props) {
   const statusBadge = navStatusShort(ship.navStatus);
   const destination = resolveDestination(ship.destination);
 
-  const [showPhoto, setShowPhoto] = useState(false);
-  const [photoError, setPhotoError] = useState(false);
+  const [photoStatus, setPhotoStatus] = useState<'loading' | 'found' | 'notfound'>('loading');
 
   useEffect(() => {
-    setShowPhoto(false);
-    setPhotoError(false);
+    setPhotoStatus('loading');
   }, [ship.mmsi]);
 
-  const photoUrl = `https://photos.marinetraffic.com/ais/showphoto.aspx?mmsi=${ship.mmsi}`;
+  const probeUrl = `https://photos.marinetraffic.com/ais/showphoto.aspx?mmsi=${ship.mmsi}`;
 
   return (
     <div className="watch-mode">
       <button className="watch-mode-close" onClick={onClose}>✕</button>
-      <button
-        className="watch-mode-photo-btn"
-        onClick={() => setShowPhoto(p => !p)}
-        title={showPhoto ? "Hide photo" : "Show photo"}
-      >
-        📷
-      </button>
+      {photoStatus === 'found' && (
+        <a
+          className="watch-mode-photo-link"
+          href={probeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="View ship photos on MarineTraffic"
+        >📷</a>
+      )}
+      <img
+        className="watch-mode-photo-probe"
+        src={probeUrl}
+        alt=""
+        onLoad={() => setPhotoStatus('found')}
+        onError={() => setPhotoStatus('notfound')}
+      />
       <div className="watch-mode-inner">
         <div className="watch-mode-emoji">{typeInfo.emoji}</div>
         <div className="watch-mode-name">
@@ -45,16 +52,6 @@ export function WatchMode({ ship, onClose }: Props) {
           {ship.name || "Unknown"}
         </div>
         {statusBadge && <div className="watch-mode-status">{statusBadge}</div>}
-        {showPhoto && (
-          photoError
-            ? <div className="watch-mode-no-photo">No photo available</div>
-            : <img
-                className="watch-mode-photo"
-                src={photoUrl}
-                alt={ship.name || "Ship photo"}
-                onError={() => setPhotoError(true)}
-              />
-        )}
         <div className="watch-mode-distance">{formatDistance(ship.distance)}</div>
         <div className="watch-mode-meta">
           {formatSpeed(ship.speed)} · {direction}

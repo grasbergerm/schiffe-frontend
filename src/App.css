@@ -366,17 +366,11 @@ body {
   color: var(--text-muted);
 }
 
-.watch-mode-photo {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  margin: 8px 0 16px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.watch-mode-photo-probe {
+  display: none;
 }
 
-.watch-mode-photo-btn {
+.watch-mode-photo-link {
   position: absolute;
   top: 20px;
   right: 68px;
@@ -385,14 +379,9 @@ body {
   border-radius: 8px;
   padding: 6px 12px;
   font-size: 16px;
-  cursor: pointer;
   color: var(--text-secondary);
-}
-
-.watch-mode-no-photo {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 8px 0 16px;
+  text-decoration: none;
+  line-height: 1;
 }
 
 /* ── Expanded Details ── */

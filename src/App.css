@@ -132,10 +132,33 @@ body {
   color: var(--accent);
 }
 
+.subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
 .subtitle {
   font-size: 13px;
   color: var(--text-muted);
-  margin-top: 3px;
+}
+
+.location-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: border-color 0.1s, color 0.1s;
+  line-height: 1.4;
+}
+
+.location-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 /* ── Filter Bar ── */

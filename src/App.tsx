@@ -11,7 +11,7 @@ export default function App() {
   const [filter, setFilter] = useState("all");
   const [movingOnly, setMovingOnly] = useState(false);
   const [watchMode, setWatchMode] = useState(false);
-  const { location, locationName } = useGeolocation();
+  const { location, locationName, isDefaultLocation, requestLocation } = useGeolocation();
   const { ships, meta, isLoading, error } = useShips(filter, location, movingOnly);
 
   const neverLoaded = isLoading && !meta;
@@ -35,7 +35,12 @@ export default function App() {
               </button>
             )}
           </div>
-          <p className="subtitle">{locationName}</p>
+          <span className="subtitle-row">
+            <p className="subtitle">{locationName}</p>
+            {isDefaultLocation && navigator.geolocation && (
+              <button className="location-btn" onClick={requestLocation} title="Use my location">📍</button>
+            )}
+          </span>
         </header>
         <FilterBar
           active={filter}

@@ -6,6 +6,7 @@ interface UseGeolocationReturn {
   location: Location;
   locationName: string;
   isDefaultLocation: boolean;
+  requestLocation: () => void;
 }
 
 const BLANKENESE: Location = { lat: 53.5565, lon: 9.8063 };
@@ -47,7 +48,7 @@ export function useGeolocation(): UseGeolocationReturn {
   const [locationName, setLocationName] = useState(BLANKENESE_NAME);
   const [isDefaultLocation, setIsDefaultLocation] = useState(true);
 
-  useEffect(() => {
+  function requestLocation() {
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(
@@ -80,7 +81,11 @@ export function useGeolocation(): UseGeolocationReturn {
         // Permission denied or unavailable — keep Blankenese fallback
       }
     );
+  }
+
+  useEffect(() => {
+    requestLocation();
   }, []);
 
-  return { location, locationName, isDefaultLocation };
+  return { location, locationName, isDefaultLocation, requestLocation };
 }

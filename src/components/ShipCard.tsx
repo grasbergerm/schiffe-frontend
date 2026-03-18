@@ -5,6 +5,7 @@ import { formatDistance, formatSpeed, formatRelativeTime, getDirection } from ".
 import { flagFromMmsi } from "../utils/flag";
 import { navStatusLabel, navStatusShort } from "../utils/navStatus";
 import { resolveDestination } from "../utils/ports";
+import { ShipSizeIcon } from "./ShipSizeIcon";
 
 interface Props {
   ship: ShipData;
@@ -38,7 +39,12 @@ export function ShipCard({ ship, isNearest }: Props) {
         <span className="ship-speed">{formatSpeed(ship.speed)}</span>
         <span className="ship-distance mono">{formatDistance(ship.distance)}</span>
       </div>
-      <div className="ship-lastseen">{formatRelativeTime(ship.lastUpdate)}</div>
+      <div className="ship-icon-row">
+        <ShipSizeIcon length={ship.length} width={ship.width} category={typeInfo.category} />
+      </div>
+      <div className="ship-card-footer">
+        <span className="ship-lastseen">{formatRelativeTime(ship.lastUpdate)}</span>
+      </div>
 
       {expanded && (
         <div className="ship-card-details">

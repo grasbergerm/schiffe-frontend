@@ -163,11 +163,24 @@ body {
   color: var(--accent);
 }
 
+.filter-pill-active:hover,
+.filter-pill-active-cargo:hover,
+.filter-pill-active-tanker:hover,
+.filter-pill-active-passenger:hover,
+.filter-pill-active-other:hover {
+  color: #fff;
+}
+
 .filter-pill-active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
 }
+
+.filter-pill-active-cargo     { background: var(--cargo);      border-color: var(--cargo);      color: #fff; }
+.filter-pill-active-tanker    { background: var(--tanker);     border-color: var(--tanker);     color: #fff; }
+.filter-pill-active-passenger { background: var(--passenger);  border-color: var(--passenger);  color: #fff; }
+.filter-pill-active-other     { background: var(--other);      border-color: var(--other);      color: #fff; }
 
 /* ── Ship List ── */
 .ship-list {
@@ -252,11 +265,24 @@ body {
   text-align: right;
 }
 
-/* ── Last Seen ── */
+/* ── Ship Icon Row ── */
+.ship-icon-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+  margin-bottom: 2px;
+}
+
+/* ── Card Footer ── */
+.ship-card-footer {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
 .ship-lastseen {
   font-size: 11px;
   color: var(--text-muted);
-  margin-top: 4px;
 }
 
 /* ── Nav Status Badge ── */
@@ -338,6 +364,35 @@ body {
 .watch-mode-destination {
   font-size: 14px;
   color: var(--text-muted);
+}
+
+.watch-mode-photo {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  margin: 8px 0 16px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.watch-mode-photo-btn {
+  position: absolute;
+  top: 20px;
+  right: 68px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.watch-mode-no-photo {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 8px 0 16px;
 }
 
 /* ── Expanded Details ── */

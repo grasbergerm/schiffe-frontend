@@ -23,10 +23,10 @@ export function getShipTypeInfo(shipType: number | null): ShipTypeInfo {
   }
 }
 
-export const FILTER_OPTIONS: { label: string; value: string }[] = [
+export const FILTER_OPTIONS: { label: string; value: string; emoji?: string }[] = [
   { label: "All", value: "all" },
-  { label: "Cargo", value: "cargo" },
-  { label: "Tanker", value: "tanker" },
-  { label: "Passenger", value: "passenger" },
-  { label: "Other", value: "other" },
+  { label: "Cargo", value: "cargo", emoji: "🚢" },
+  { label: "Tanker", value: "tanker", emoji: "🛢️" },
+  { label: "Passenger", value: "passenger", emoji: "🛳️" },
+  { label: "Other", value: "other", emoji: "⛵" },
 ];

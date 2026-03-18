@@ -13,17 +13,17 @@ export function FilterBar({ active, onChange, movingOnly, onMovingOnlyChange }: 
       {FILTER_OPTIONS.map((opt) => (
         <button
           key={opt.value}
-          className={`filter-pill${active === opt.value ? " filter-pill-active" : ""}`}
-          onClick={() => onChange(opt.value)}
+          className={`filter-pill${active === opt.value ? ` filter-pill-active${opt.emoji ? `-${opt.value}` : ""}` : ""}`}
+          onClick={() => onChange(active === opt.value ? "all" : opt.value)}
         >
-          {opt.label}
+          {opt.emoji ? `${opt.emoji} ${opt.label}` : opt.label}
         </button>
       ))}
       <button
         className={`filter-pill${movingOnly ? " filter-pill-active" : ""}`}
         onClick={() => onMovingOnlyChange(!movingOnly)}
       >
-        ⚡ Moving
+        🌊 Moving
       </button>
     </div>
   );

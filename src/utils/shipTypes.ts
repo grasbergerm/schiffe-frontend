@@ -7,7 +7,7 @@ export interface ShipTypeInfo {
 }
 
 export function getShipTypeInfo(shipType: number | null): ShipTypeInfo {
-  if (shipType === null) return { label: "Unknown", emoji: "🚢", category: "other" };
+  if (shipType === null) return { label: "Unknown", emoji: "❓", category: "other" };
 
   const firstDigit = Math.floor(shipType / 10);
 

@@ -49,6 +49,10 @@ export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
 
       {expanded && (
         <div className="ship-card-details">
+          <div className="detail-row">
+            <span className="detail-label">Type</span>
+            <span className="detail-value">{typeInfo.label}</span>
+          </div>
           {status && (
             <div className="detail-row">
               <span className="detail-label">Status</span>

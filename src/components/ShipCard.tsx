@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { ShipData } from "../types";
 import { getShipTypeInfo } from "../utils/shipTypes";
 import { formatDistance, formatSpeed, formatRelativeTime, getDirection } from "../utils/format";
@@ -10,10 +9,11 @@ import { ShipSizeIcon } from "./ShipSizeIcon";
 interface Props {
   ship: ShipData;
   isNearest: boolean;
+  expanded: boolean;
+  onToggle: () => void;
 }
 
-export function ShipCard({ ship, isNearest }: Props) {
-  const [expanded, setExpanded] = useState(false);
+export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
   const typeInfo = getShipTypeInfo(ship.shipType);
   const direction = getDirection(ship.heading);
   const flag = flagFromMmsi(ship.mmsi);
@@ -24,7 +24,7 @@ export function ShipCard({ ship, isNearest }: Props) {
   return (
     <div
       className={`ship-card${isNearest ? " ship-card-nearest" : ""}${expanded ? " ship-card-expanded" : ""}`}
-      onClick={() => setExpanded((e) => !e)}
+      onClick={onToggle}
     >
       <div className="ship-card-row">
         <span className={`type-pill type-pill-${typeInfo.category}`}>
@@ -44,6 +44,7 @@ export function ShipCard({ ship, isNearest }: Props) {
       </div>
       <div className="ship-card-footer">
         <span className="ship-lastseen">{formatRelativeTime(ship.lastUpdate)}</span>
+        {destination && <span className="ship-destination">→ {destination}</span>}
       </div>
 
       {expanded && (

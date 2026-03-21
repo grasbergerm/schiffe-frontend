@@ -308,6 +308,12 @@ body {
   color: var(--text-muted);
 }
 
+.ship-destination {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
 /* ── Nav Status Badge ── */
 .ship-status-badge {
   font-size: 11px;

@@ -12,3 +12,18 @@ describe("getShipTypeInfo — null (unknown) ship type", () => {
     expect(getShipTypeInfo(null).category).toBe("other");
   });
 });
+
+describe("getShipTypeInfo — known ship types", () => {
+  it("returns Cargo for shipType 70", () => {
+    expect(getShipTypeInfo(70)).toMatchObject({ label: "Cargo", emoji: "🚢", category: "cargo" });
+  });
+  it("returns Tanker for shipType 80", () => {
+    expect(getShipTypeInfo(80)).toMatchObject({ label: "Tanker", emoji: "🛢️", category: "tanker" });
+  });
+  it("returns Passenger for shipType 60", () => {
+    expect(getShipTypeInfo(60)).toMatchObject({ label: "Passenger", emoji: "🛳️", category: "passenger" });
+  });
+  it("returns Other for shipType 30 (pleasure craft)", () => {
+    expect(getShipTypeInfo(30)).toMatchObject({ label: "Other", emoji: "⛵", category: "other" });
+  });
+});

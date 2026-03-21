@@ -96,6 +96,39 @@ const MID_TO_CC: Record<number, string> = {
   616: "KM",                                      // Comoros
 };
 
+const CC_TO_NAME: Record<string, string> = {
+  // Europe
+  DE: "Germany", NL: "Netherlands", BE: "Belgium", GB: "United Kingdom",
+  FI: "Finland", SE: "Sweden", DK: "Denmark", CY: "Cyprus",
+  PT: "Portugal", MT: "Malta", FR: "France", IT: "Italy",
+  ES: "Spain", NO: "Norway", GR: "Greece", IE: "Ireland",
+  IS: "Iceland", PL: "Poland", EE: "Estonia", LV: "Latvia",
+  LT: "Lithuania", HR: "Croatia", RO: "Romania", BG: "Bulgaria",
+  UA: "Ukraine", TR: "Turkey", RU: "Russia", GI: "Gibraltar",
+  FO: "Faroe Islands", MA: "Morocco",
+  // Americas
+  US: "United States", CA: "Canada", MX: "Mexico",
+  BR: "Brazil", AR: "Argentina", CL: "Chile", CO: "Colombia",
+  PE: "Peru", VE: "Venezuela", BS: "Bahamas", BM: "Bermuda",
+  BZ: "Belize", AG: "Antigua & Barbuda", BB: "Barbados",
+  HN: "Honduras", TT: "Trinidad & Tobago", VC: "St. Vincent",
+  PA: "Panama", AN: "Netherlands Antilles", KY: "Cayman Islands",
+  VG: "British Virgin Islands",
+  // Asia / Pacific
+  CN: "China", SG: "Singapore", IN: "India", MY: "Malaysia",
+  ID: "Indonesia", PH: "Philippines", VN: "Vietnam", TH: "Thailand",
+  AE: "United Arab Emirates", SA: "Saudi Arabia", KW: "Kuwait",
+  QA: "Qatar", IR: "Iran", IL: "Israel",
+  AU: "Australia", NZ: "New Zealand", FJ: "Fiji", TW: "Taiwan",
+  HK: "Hong Kong", KR: "South Korea", JP: "Japan", KH: "Cambodia",
+  PW: "Palau", CK: "Cook Islands", MH: "Marshall Islands",
+  TV: "Tuvalu", VU: "Vanuatu",
+  // Africa
+  LR: "Liberia", ZA: "South Africa", EG: "Egypt", KE: "Kenya",
+  MZ: "Mozambique", NA: "Namibia", SL: "Sierra Leone",
+  TZ: "Tanzania", CM: "Cameroon", KM: "Comoros",
+};
+
 function ccToFlag(cc: string): string {
   // Convert ISO country code to emoji flag
   return cc
@@ -109,4 +142,10 @@ export function flagFromMmsi(mmsi: number): string | null {
   const mid = Math.floor(mmsi / 1_000_000);
   const cc = MID_TO_CC[mid];
   return cc ? ccToFlag(cc) : null;
+}
+
+export function countryFromMmsi(mmsi: number): string | null {
+  const mid = Math.floor(mmsi / 1_000_000);
+  const cc = MID_TO_CC[mid];
+  return cc ? (CC_TO_NAME[cc] ?? null) : null;
 }

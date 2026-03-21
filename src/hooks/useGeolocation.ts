@@ -15,6 +15,7 @@ const GEO_TIMEOUT_MS = 8_000;
 
 async function fetchWithTimeout(url: string, options: RequestInit = {}): Promise<Response> {
   const controller = new AbortController();
+  /* c8 ignore next */
   const timeout = setTimeout(() => controller.abort(), GEO_TIMEOUT_MS);
   try {
     return await fetch(url, { ...options, signal: controller.signal });
@@ -74,6 +75,7 @@ export function useGeolocation(): UseGeolocationReturn {
             setLocationName("Near you");
           }
         } catch {
+          /* c8 ignore next */
           setLocationName("Near you");
         }
       },

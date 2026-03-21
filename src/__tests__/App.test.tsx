@@ -99,4 +99,118 @@ describe("App structure", () => {
     render(<App />);
     expect(screen.getByText("Loading…")).toBeInTheDocument();
   });
+
+  it("hides 👁 watch button when there are no ships (kills ships.length > 0 → >= or true)", () => {
+    setGeolocation(false);
+    vi.mocked(useShips).mockReturnValue({ ships: [], meta: null, isLoading: false, error: null });
+    render(<App />);
+    expect(screen.queryByText("👁")).not.toBeInTheDocument();
+  });
+
+  it("does NOT show error state when isLoading=true but meta is already present (kills neverLoaded || mutation)", () => {
+    // neverLoaded = isLoading && !meta. With isLoading=true, meta={...}: neverLoaded = true && false = false.
+    // Mutation isLoading || !meta: true || false = true → error state shown even though meta exists.
+    setGeolocation(false);
+    vi.mocked(useShips).mockReturnValue({
+      ships: [],
+      meta: { count: 0, updatedAt: new Date().toISOString(), connected: true },
+      isLoading: true,
+      error: "Network error",
+    });
+    render(<App />);
+    expect(screen.queryByText("Unable to load ship data")).not.toBeInTheDocument();
+  });
+
+  it("ship list is shown (not loading spinner) when meta is present", () => {
+    setGeolocation(false);
+    vi.mocked(useShips).mockReturnValue({
+      ships: [],
+      meta: { count: 0, updatedAt: new Date().toISOString(), connected: true },
+      isLoading: false,
+      error: null,
+    });
+    render(<App />);
+    expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
+  });
+});
+
+// ── watch mode ────────────────────────────────────────────────────────────────
+
+describe("watch mode", () => {
+  it("shows watch button when ships exist", () => {
+    setGeolocation(false);
+    vi.mocked(useShips).mockReturnValue({
+      ships: [{
+        mmsi: 123456789, name: "ELBE STAR", shipType: 70,
+        lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
+        navStatus: null, destination: null, length: null, width: null,
+        distance: 1.5, lastUpdate: new Date().toISOString(),
+      }],
+      meta: { count: 1, updatedAt: new Date().toISOString(), connected: true },
+      isLoading: false,
+      error: null,
+    });
+    render(<App />);
+    expect(screen.getByText("👁")).toBeInTheDocument();
+  });
+
+  it("enters watch mode when watch button is clicked", async () => {
+    setGeolocation(false);
+    const ship = {
+      mmsi: 123456789, name: "WATCH VESSEL", shipType: 70,
+      lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
+      navStatus: null, destination: null, length: null, width: null,
+      distance: 1.5, lastUpdate: new Date().toISOString(),
+    };
+    vi.mocked(useShips).mockReturnValue({
+      ships: [ship],
+      meta: { count: 1, updatedAt: new Date().toISOString(), connected: true },
+      isLoading: false,
+      error: null,
+    });
+    render(<App />);
+    await userEvent.click(screen.getByText("👁"));
+    // Should now show WatchMode with the ship name
+    expect(screen.getByText("WATCH VESSEL")).toBeInTheDocument();
+    // Close button should be visible
+    expect(screen.getByText("✕")).toBeInTheDocument();
+  });
+
+  it("exits watch mode when close button is clicked", async () => {
+    setGeolocation(false);
+    const ship = {
+      mmsi: 123456789, name: "WATCH VESSEL", shipType: 70,
+      lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
+      navStatus: null, destination: null, length: null, width: null,
+      distance: 1.5, lastUpdate: new Date().toISOString(),
+    };
+    vi.mocked(useShips).mockReturnValue({
+      ships: [ship],
+      meta: { count: 1, updatedAt: new Date().toISOString(), connected: true },
+      isLoading: false,
+      error: null,
+    });
+    render(<App />);
+    await userEvent.click(screen.getByText("👁"));
+    expect(screen.getByText("✕")).toBeInTheDocument();
+    await userEvent.click(screen.getByText("✕"));
+    // Back to normal view — title should be visible again
+    expect(screen.getByText("Schiffe")).toBeInTheDocument();
+  });
+});
+
+// ── error state ───────────────────────────────────────────────────────────────
+
+describe("error state", () => {
+  it("shows ErrorState when error occurs before first load (neverLoaded + error)", () => {
+    setGeolocation(false);
+    vi.mocked(useShips).mockReturnValue({
+      ships: [],
+      meta: null,
+      isLoading: true,
+      error: "Network error",
+    });
+    render(<App />);
+    expect(screen.getByText("Unable to load ship data")).toBeInTheDocument();
+  });
 });

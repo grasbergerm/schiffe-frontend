@@ -1,7 +1,7 @@
 import type { ShipData } from "../types";
 import { getShipTypeInfo } from "../utils/shipTypes";
 import { formatDistance, formatSpeed, formatRelativeTime, getDirection } from "../utils/format";
-import { flagFromMmsi } from "../utils/flag";
+import { flagFromMmsi, countryFromMmsi } from "../utils/flag";
 import { navStatusLabel, navStatusShort } from "../utils/navStatus";
 import { resolveDestination } from "../utils/ports";
 import { ShipSizeIcon } from "./ShipSizeIcon";
@@ -17,6 +17,7 @@ export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
   const typeInfo = getShipTypeInfo(ship.shipType);
   const direction = getDirection(ship.heading);
   const flag = flagFromMmsi(ship.mmsi);
+  const country = countryFromMmsi(ship.mmsi);
   const status = navStatusLabel(ship.navStatus);
   const statusBadge = navStatusShort(ship.navStatus);
   const destination = resolveDestination(ship.destination);
@@ -53,6 +54,12 @@ export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
             <span className="detail-label">Type</span>
             <span className="detail-value">{typeInfo.label}</span>
           </div>
+          {flag && country && (
+            <div className="detail-row">
+              <span className="detail-label">Flag</span>
+              <span className="detail-value">{flag} {country}</span>
+            </div>
+          )}
           {status && (
             <div className="detail-row">
               <span className="detail-label">Status</span>

@@ -133,12 +133,86 @@ describe("useGeolocation — successful location", () => {
     await waitFor(() => expect(result.current.locationName).toBe("Elbe · Altona"));
   });
 
+  it("sets locationName from waterway only when suburb is absent", async () => {
+    mockGeoSuccess(53.56, 9.81);
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (String(url).includes("nominatim"))
+        return Promise.resolve(new Response(JSON.stringify({ address: {} }), { status: 200 }));
+      return overpassResponse("Elbe");
+    }));
+
+    const { result } = renderHook(() => useGeolocation());
+    await waitFor(() => expect(result.current.locationName).toBe("Elbe"));
+  });
+
   it("falls back to 'Near you' when reverse geocoding fails", async () => {
     mockGeoSuccess(53.56, 9.81);
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network error")));
 
     const { result } = renderHook(() => useGeolocation());
     await waitFor(() => expect(result.current.locationName).toBe("Near you"));
+  });
+
+  it("falls back to 'Near you' when both APIs return non-ok responses", async () => {
+    mockGeoSuccess(53.56, 9.81);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("", { status: 500 })));
+
+    const { result } = renderHook(() => useGeolocation());
+    await waitFor(() => expect(result.current.locationName).toBe("Near you"));
+  });
+
+  it("falls back to 'Near you' when Nominatim returns non-ok with valid JSON (kills if(false) mutation)", async () => {
+    // With mutation `if (false)`, the throw is removed → data parsed as valid address → place="Test".
+    // With original code, status=500 → throws → .catch(() => "") → place="".
+    // Waterway returns empty → both empty → "Near you".
+    mockGeoSuccess(53.56, 9.81);
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (String(url).includes("nominatim"))
+        return Promise.resolve(new Response(JSON.stringify({ address: { suburb: "Test" } }), { status: 500 }));
+      return Promise.resolve(new Response(JSON.stringify({ elements: [] }), { status: 200 }));
+    }));
+    const { result } = renderHook(() => useGeolocation());
+    await waitFor(() => expect(result.current.locationName).toBe("Near you"));
+  });
+
+  it("shows suburb only when Overpass returns non-ok with valid JSON (kills Overpass if(false) mutation)", async () => {
+    // With mutation `if (false)` for Overpass, throw removed → waterway="TestWay" → "TestWay · Ottensen".
+    // With original, status=500 → throws → .catch(() => "") → waterway="" → "Ottensen".
+    mockGeoSuccess(53.56, 9.81);
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (String(url).includes("nominatim")) return nominatimResponse("Ottensen");
+      return Promise.resolve(new Response(
+        JSON.stringify({ elements: [{ tags: { name: "TestWay" } }] }),
+        { status: 500 }
+      ));
+    }));
+    const { result } = renderHook(() => useGeolocation());
+    await waitFor(() => expect(result.current.locationName).toBe("Ottensen"));
+  });
+
+  it("handles missing address field in Nominatim response (uses suburb fallbacks)", async () => {
+    mockGeoSuccess(53.56, 9.81);
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (String(url).includes("nominatim"))
+        // No address field → data.address ?? {} = {} → all fallbacks empty → place = ""
+        return Promise.resolve(new Response(JSON.stringify({}), { status: 200 }));
+      return overpassResponse("Elbe");
+    }));
+
+    const { result } = renderHook(() => useGeolocation());
+    await waitFor(() => expect(result.current.locationName).toBe("Elbe"));
+  });
+
+  it("handles empty elements array in Overpass response", async () => {
+    mockGeoSuccess(53.56, 9.81);
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (String(url).includes("nominatim")) return nominatimResponse("Altona");
+      // Empty elements → data.elements?.[0] is undefined → waterway = ""
+      return Promise.resolve(new Response(JSON.stringify({ elements: [] }), { status: 200 }));
+    }));
+
+    const { result } = renderHook(() => useGeolocation());
+    await waitFor(() => expect(result.current.locationName).toBe("Altona"));
   });
 
   it("works with Argentine coordinates (negative lat/lon)", async () => {

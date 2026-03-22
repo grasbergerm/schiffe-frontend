@@ -19,6 +19,12 @@
   --other-muted: rgba(107, 114, 128, 0.1);
   --error: #dc2626;
   --error-bg: rgba(220, 38, 38, 0.08);
+  --map-bg: #f0f4f8;
+  --map-water: #4a90c4;
+  --map-land: #c8d6c0;
+  --map-self: #d97706;
+  --map-accent: #2563eb;
+  --map-accent-hover: #1d4ed8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,6 +48,12 @@
     --other-muted: rgba(156, 163, 175, 0.1);
     --error: #f87171;
     --error-bg: rgba(248, 113, 113, 0.08);
+    --map-bg: #0a1520;
+    --map-water: #2a5a8c;
+    --map-land: #1a2a1a;
+    --map-self: #e08030;
+    --map-accent: #1a7a9c;
+    --map-accent-hover: #00ccff;
   }
 }
 
@@ -83,7 +95,7 @@ body {
   flex-shrink: 0;
   width: 60%;
   position: relative;
-  background: #050d14;
+  background: var(--map-bg);
   border-right: 1px solid var(--border);
   overflow: hidden;
   cursor: grab;
@@ -96,7 +108,7 @@ body {
   position: absolute;
   bottom: 10px;
   left: 10px;
-  color: #1a7a9c;
+  color: var(--map-accent);
   font-size: 11px;
   font-family: monospace;
   pointer-events: none;
@@ -108,10 +120,10 @@ body {
 .map-flip-btn {
   position: absolute;
   bottom: 10px;
-  background: #050d14;
-  border: 1px solid #1a3a5c;
+  background: var(--map-bg);
+  border: 1px solid var(--map-water);
   border-radius: 4px;
-  color: #1a7a9c;
+  color: var(--map-accent);
   font-size: 14px;
   line-height: 1;
   padding: 0;
@@ -135,8 +147,8 @@ body {
 
 .map-north-btn:hover,
 .map-flip-btn:hover {
-  border-color: #00ccff;
-  color: #00ccff;
+  border-color: var(--map-accent-hover);
+  color: var(--map-accent-hover);
 }
 
 .list-pane {

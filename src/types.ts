@@ -24,3 +24,18 @@ export interface ApiResponse {
   ships: ShipData[];
   meta: ApiMeta;
 }
+
+export type CellType = "water" | "land";
+
+export interface MapBounds {
+  northLat: number;
+  southLat: number;
+  westLon: number;
+  eastLon: number;
+}
+
+export interface MapGrid {
+  grid: CellType[][];
+  bounds: MapBounds;
+  bearing: number;
+}

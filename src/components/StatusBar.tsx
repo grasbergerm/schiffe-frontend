@@ -26,19 +26,23 @@ export function StatusBar({ meta, error, shipCount, locationName, isDefaultLocat
     <div className="status-bar">
       <span className="status-left">
         <span className={dotClass} />
-        {statusText} · {shipCount} ships
+        {error ? statusText : `${statusText} · ${shipCount} ships`}
       </span>
       <span className="status-center">
         {locationName}
         {isDefaultLocation && navigator.geolocation && (
           <button className="location-btn" onClick={onRequestLocation} title="Use my location">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ display: 'block' }}>
-              <line x1="12" y1="2"  x2="12" y2="6"  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-              <line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-              <line x1="2"  y1="12" x2="6"  y2="12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-              <line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-              <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" strokeWidth="2.5"/>
-              <circle cx="12" cy="12" r="3.5"/>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+              {/* top arm */}
+              <rect x="6" y="1" width="2" height="4"/>
+              {/* bottom arm */}
+              <rect x="6" y="9" width="2" height="4"/>
+              {/* left arm */}
+              <rect x="1" y="6" width="4" height="2"/>
+              {/* right arm */}
+              <rect x="9" y="6" width="4" height="2"/>
+              {/* center dot */}
+              <rect x="6" y="6" width="2" height="2"/>
             </svg>
           </button>
         )}

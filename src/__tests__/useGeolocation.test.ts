@@ -268,10 +268,8 @@ describe("requestLocation", () => {
 
     const { result } = renderHook(() => useGeolocation(), { wrapper: StrictMode });
 
-    await waitFor(() => expect(result.current.locationName).not.toBe("Elbe · Blankenese"));
-
     // Should preserve the waterway — not be overwritten by the rate-limited second call
-    expect(result.current.locationName).toBe("Elbe · Altona");
+    await waitFor(() => expect(result.current.locationName).toBe("Elbe · Altona"));
   });
 
   it("updates location and clears isDefaultLocation after manual retry succeeds", async () => {

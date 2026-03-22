@@ -9,6 +9,7 @@ interface Props {
 
 export function FilterBar({ active, onChange, movingOnly, onMovingOnlyChange }: Props) {
   return (
+    <div className="filter-bar-wrap">
     <div className="filter-bar">
       {FILTER_OPTIONS.slice(0, 1).map((opt) => (
         <button
@@ -34,6 +35,7 @@ export function FilterBar({ active, onChange, movingOnly, onMovingOnlyChange }: 
           {opt.emoji ? `${opt.emoji} ${opt.label}` : opt.label}
         </button>
       ))}
+    </div>
     </div>
   );
 }

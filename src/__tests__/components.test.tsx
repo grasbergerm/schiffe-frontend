@@ -123,14 +123,14 @@ describe("ShipSizeIcon", () => {
 
   it("uses the correct fill color for cargo category", () => {
     const { container } = render(<ShipSizeIcon length={60} width={15} category="cargo" />);
-    const path = container.querySelector("path") as SVGPathElement;
-    expect(path.getAttribute("fill")).toBe("var(--cargo)");
+    const shape = container.querySelector("polygon") as SVGPolygonElement;
+    expect(shape.getAttribute("fill")).toBe("var(--cargo)");
   });
 
   it("uses the correct fill color for tanker category", () => {
     const { container } = render(<ShipSizeIcon length={60} width={15} category="tanker" />);
-    const path = container.querySelector("path") as SVGPathElement;
-    expect(path.getAttribute("fill")).toBe("var(--tanker)");
+    const shape = container.querySelector("polygon") as SVGPolygonElement;
+    expect(shape.getAttribute("fill")).toBe("var(--tanker)");
   });
 });
 

@@ -582,3 +582,19 @@ body {
   color: var(--text-secondary);
   line-height: 1.6;
 }
+
+/* ── Mobile layout (≤640px) ── */
+@media (max-width: 640px) {
+  .layout {
+    flex-direction: column;
+  }
+  .map-pane {
+    width: 100%;
+    height: 45vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .header {
+    padding: 14px 0 10px;
+  }
+}

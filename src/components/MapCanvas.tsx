@@ -27,6 +27,7 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [grid, setGrid] = useState<CellType[][] | null>(null)
+  const [loading, setLoading] = useState(true)
   const [isDark, setIsDark] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
   )
@@ -59,22 +60,38 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
   // Fetch grid from /map endpoint
   useEffect(() => {
     let cancelled = false
+    setLoading(true)
     fetch(`${API_URL}/map?lat=${lat}&lon=${lon}`)
       .then(res => res.json())
       .then((data: MapGrid) => {
-        if (!cancelled) setGrid(data.grid)
+        if (!cancelled) {
+          setGrid(data.grid)
+          setLoading(false)
+        }
       })
-      .catch(() => {})
+      .catch(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
   }, [lat, lon])
 
   // Render dots
   useEffect(() => {
     const el = canvasRef.current
-    if (!el || size.w === 0 || !grid) return
+    if (!el || size.w === 0) return
     const ctx = el.getContext('2d')!
     const { w, h } = size
     const colors = getMapColors(el)
+
+    if (!grid) {
+      ctx.fillStyle = colors.bg
+      ctx.fillRect(0, 0, w, h)
+      if (loading) {
+        ctx.fillStyle = colors.water
+        ctx.font = '11px monospace'
+        ctx.textAlign = 'center'
+        ctx.fillText('loading map\u2026', w / 2, h / 2)
+      }
+      return
+    }
 
     const angle = (bearing + (flipped ? 180 : 0)) % 360
     const rotated = rotateGrid(grid, angle, GRID)
@@ -113,7 +130,7 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
     ctx.fillStyle = colors.self
     ctx.fillRect(selfCx - crossT / 2, selfY, crossT, dotH)
     ctx.fillRect(selfX, selfCy - crossT / 2, dotW, crossT)
-  }, [grid, bearing, flipped, size, isDark])
+  }, [grid, loading, bearing, flipped, size, isDark])
 
   return (
     <canvas

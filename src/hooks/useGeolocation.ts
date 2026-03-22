@@ -59,6 +59,7 @@ export function useGeolocation(): UseGeolocationReturn {
         const lon = pos.coords.longitude;
         setLocation({ lat, lon });
         setIsDefaultLocation(false);
+        setLocationName((prev) => prev === BLANKENESE_NAME ? "Loading…" : prev);
 
         try {
           const [place, waterway] = await Promise.all([

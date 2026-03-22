@@ -25,6 +25,7 @@
   --map-self: #d97706;
   --map-accent: #2563eb;
   --map-accent-hover: #1d4ed8;
+  --map-ship: #e02050;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,6 +55,7 @@
     --map-self: #e08030;
     --map-accent: #1a7a9c;
     --map-accent-hover: #00ccff;
+    --map-ship: #ff4070;
   }
 }
 

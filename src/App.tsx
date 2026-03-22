@@ -71,6 +71,7 @@ export default function App() {
               lon={location.lon}
               flipped={flipped}
               bearing={rotation}
+              ships={ships}
             />
           </div>
           <button

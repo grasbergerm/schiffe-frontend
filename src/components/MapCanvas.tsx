@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import type { CellType, MapGrid } from '../types'
+import type { ShipData, CellType, MapGrid, MapBounds } from '../types'
 import { rotateGrid } from '../utils/rotateGrid'
 
 interface Props {
@@ -7,6 +7,7 @@ interface Props {
   lon:     number
   flipped: boolean
   bearing: number
+  ships:   ShipData[]
 }
 
 
@@ -19,13 +20,15 @@ function getMapColors(el: HTMLElement) {
     water: s.getPropertyValue('--map-water').trim(),
     land:  s.getPropertyValue('--map-land').trim(),
     self:  s.getPropertyValue('--map-self').trim(),
+    ship:  s.getPropertyValue('--map-ship').trim(),
   }
 }
 
-export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
+export function MapCanvas({ lat, lon, flipped, bearing, ships }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [grid, setGrid] = useState<CellType[][] | null>(null)
+  const [paddedBounds, setPaddedBounds] = useState<MapBounds | null>(null)
   const [loading, setLoading] = useState(true)
   const [isDark, setIsDark] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -65,6 +68,7 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
       .then((data: MapGrid) => {
         if (!cancelled) {
           setGrid(data.grid)
+          setPaddedBounds(data.paddedBounds)
           setLoading(false)
         }
       })
@@ -130,7 +134,32 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
     ctx.fillStyle = colors.self
     ctx.fillRect(selfCx - crossT / 2, selfY, crossT, dotH)
     ctx.fillRect(selfX, selfCy - crossT / 2, dotW, crossT)
-  }, [grid, loading, bearing, flipped, size, isDark])
+
+    // Ship dots
+    if (paddedBounds && ships.length > 0) {
+      const theta = (angle * Math.PI) / 180
+      const cos = Math.cos(theta)
+      const sin = Math.sin(theta)
+      const cx = (gridSize - 1) / 2
+      const radius = Math.max(cellW, cellH) * 0.5
+
+      ctx.fillStyle = colors.ship
+      for (const ship of ships) {
+        const srcCol = (ship.lon - paddedBounds.westLon) / (paddedBounds.eastLon - paddedBounds.westLon) * gridSize
+        const srcRow = (paddedBounds.northLat - ship.lat) / (paddedBounds.northLat - paddedBounds.southLat) * gridSize
+        const dx = srcCol - cx
+        const dy = srcRow - cx
+        const outCol = cx + dx * cos - dy * sin
+        const outRow = cx + dx * sin + dy * cos
+        if (outCol < 0 || outCol >= gridSize || outRow < 0 || outRow >= gridSize) continue
+        const px = outCol * cellW + cellW / 2
+        const py = outRow * cellH + cellH / 2
+        ctx.beginPath()
+        ctx.arc(px, py, radius, 0, 2 * Math.PI)
+        ctx.fill()
+      }
+    }
+  }, [grid, loading, bearing, flipped, size, isDark, ships, paddedBounds])
 
   return (
     <canvas

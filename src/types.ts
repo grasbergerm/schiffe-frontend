@@ -37,5 +37,6 @@ export interface MapBounds {
 export interface MapGrid {
   grid: CellType[][];
   bounds: MapBounds;
+  paddedBounds: MapBounds;
   bearing: number;
 }

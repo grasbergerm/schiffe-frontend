@@ -10,7 +10,7 @@ interface Props {
 export function FilterBar({ active, onChange, movingOnly, onMovingOnlyChange }: Props) {
   return (
     <div className="filter-bar">
-      {FILTER_OPTIONS.map((opt) => (
+      {FILTER_OPTIONS.slice(0, 1).map((opt) => (
         <button
           key={opt.value}
           className={`filter-pill${active === opt.value ? ` filter-pill-active${opt.emoji ? `-${opt.value}` : ""}` : ""}`}
@@ -25,6 +25,15 @@ export function FilterBar({ active, onChange, movingOnly, onMovingOnlyChange }: 
       >
         🌊 Moving
       </button>
+      {FILTER_OPTIONS.slice(1).map((opt) => (
+        <button
+          key={opt.value}
+          className={`filter-pill${active === opt.value ? ` filter-pill-active${opt.emoji ? `-${opt.value}` : ""}` : ""}`}
+          onClick={() => onChange(active === opt.value ? "all" : opt.value)}
+        >
+          {opt.emoji ? `${opt.emoji} ${opt.label}` : opt.label}
+        </button>
+      ))}
     </div>
   );
 }

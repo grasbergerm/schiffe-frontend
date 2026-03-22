@@ -4,8 +4,6 @@ import { ErrorState } from "../components/ErrorState";
 import { FilterBar } from "../components/FilterBar";
 import { ShipSizeIcon } from "../components/ShipSizeIcon";
 import { StatusBar } from "../components/StatusBar";
-import { WatchMode } from "../components/WatchMode";
-import type { ShipData } from "../types";
 
 // ── ErrorState ────────────────────────────────────────────────────────────────
 
@@ -138,81 +136,31 @@ describe("ShipSizeIcon", () => {
 
 // ── StatusBar ─────────────────────────────────────────────────────────────────
 
+const defaultStatusBarProps = {
+  locationName: "Blankenese",
+  isDefaultLocation: false,
+  onRequestLocation: () => {},
+};
+
 describe("StatusBar", () => {
   it("shows 'Live' with green dot when no error and AIS connected", () => {
-    render(<StatusBar meta={{ count: 5, updatedAt: new Date().toISOString(), connected: true }} error={null} shipCount={5} />);
-    expect(screen.getByText("Live")).toBeInTheDocument();
+    render(<StatusBar {...defaultStatusBarProps} meta={{ count: 5, updatedAt: new Date().toISOString(), connected: true }} error={null} shipCount={5} />);
+    expect(screen.getByText(/Live/)).toBeInTheDocument();
   });
 
   it("shows 'Server unreachable' with red dot when error is set", () => {
-    render(<StatusBar meta={null} error="Network error" shipCount={0} />);
-    expect(screen.getByText("Server unreachable")).toBeInTheDocument();
+    render(<StatusBar {...defaultStatusBarProps} meta={null} error="Network error" shipCount={0} />);
+    expect(screen.getByText(/Server unreachable/)).toBeInTheDocument();
   });
 
   it("shows 'AIS disconnected' with yellow dot when meta.connected is false", () => {
-    render(<StatusBar meta={{ count: 0, updatedAt: new Date().toISOString(), connected: false }} error={null} shipCount={0} />);
-    expect(screen.getByText("AIS disconnected")).toBeInTheDocument();
+    render(<StatusBar {...defaultStatusBarProps} meta={{ count: 0, updatedAt: new Date().toISOString(), connected: false }} error={null} shipCount={0} />);
+    expect(screen.getByText(/AIS disconnected/)).toBeInTheDocument();
   });
 
   it("shows ship count", () => {
-    render(<StatusBar meta={null} error={null} shipCount={42} />);
+    render(<StatusBar {...defaultStatusBarProps} meta={null} error={null} shipCount={42} />);
     expect(screen.getByText(/42 ships/)).toBeInTheDocument();
   });
 });
 
-// ── WatchMode ─────────────────────────────────────────────────────────────────
-
-function makeShip(overrides: Partial<ShipData> = {}): ShipData {
-  return {
-    mmsi: 211000001, name: "ELBE STAR", shipType: 70,
-    lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
-    navStatus: 5, destination: "DEHAM", length: 120, width: 20,
-    distance: 1.5, lastUpdate: new Date().toISOString(),
-    ...overrides,
-  };
-}
-
-describe("WatchMode", () => {
-  it("renders ship name and close button", () => {
-    render(<WatchMode ship={makeShip()} onClose={vi.fn()} />);
-    expect(screen.getByText("ELBE STAR")).toBeInTheDocument();
-    expect(screen.getByText("✕")).toBeInTheDocument();
-  });
-
-  it("calls onClose when close button is clicked", () => {
-    const onClose = vi.fn();
-    render(<WatchMode ship={makeShip()} onClose={onClose} />);
-    fireEvent.click(screen.getByText("✕"));
-    expect(onClose).toHaveBeenCalled();
-  });
-
-  it("shows destination when resolved", () => {
-    render(<WatchMode ship={makeShip({ destination: "DEHAM" })} onClose={vi.fn()} />);
-    expect(screen.getByText(/Hamburg/)).toBeInTheDocument();
-  });
-
-  it("shows 'Unknown' when ship name is empty", () => {
-    render(<WatchMode ship={makeShip({ name: "" })} onClose={vi.fn()} />);
-    expect(screen.getByText("Unknown")).toBeInTheDocument();
-  });
-
-  it("shows photo link when photo loads successfully (onLoad fires)", () => {
-    render(<WatchMode ship={makeShip()} onClose={vi.fn()} />);
-    const img = document.querySelector(".watch-mode-photo-probe") as HTMLImageElement;
-    // Simulate image load → photoStatus becomes 'found' → shows photo link
-    fireEvent.load(img);
-    expect(document.querySelector(".watch-mode-photo-link")).not.toBeNull();
-  });
-
-  it("shows no photo link when photo errors", () => {
-    render(<WatchMode ship={makeShip()} onClose={vi.fn()} />);
-    const img = document.querySelector(".watch-mode-photo-probe") as HTMLImageElement;
-    fireEvent.error(img);
-    expect(document.querySelector(".watch-mode-photo-link")).toBeNull();
-  });
-
-  it("shows status badge when navStatus is set", () => {
-    render(<WatchMode ship={makeShip({ navStatus: 5 })} onClose={vi.fn()} />);
-    expect(screen.getByText("Moored")).toBeInTheDocument();
-  });
-});

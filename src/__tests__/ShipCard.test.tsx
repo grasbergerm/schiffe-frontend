@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { ShipCard } from "../components/ShipCard";
 import type { ShipData } from "../types";
 
@@ -96,5 +96,29 @@ describe("ShipCard — expanded Flag row", () => {
   it("does not show Flag row when MMSI has no known country", () => {
     render(<ShipCard ship={makeShip({ mmsi: 100000001 })} isNearest={false} expanded={true} onToggle={vi.fn()} />);
     expect(screen.queryByText("Flag")).not.toBeInTheDocument();
+  });
+});
+
+describe("ShipCard — photo link in expanded card", () => {
+  it("shows Photos link when probe image loads successfully", () => {
+    const { container } = render(<ShipCard ship={makeShip()} isNearest={false} expanded={true} onToggle={vi.fn()} />);
+    const img = container.querySelector(".ship-photo-probe") as HTMLImageElement;
+    fireEvent.load(img);
+    expect(screen.getByText("Photos")).toBeInTheDocument();
+    expect(container.querySelector(".ship-photo-link")).not.toBeNull();
+  });
+
+  it("shows 'Not available' when probe image errors", () => {
+    const { container } = render(<ShipCard ship={makeShip()} isNearest={false} expanded={true} onToggle={vi.fn()} />);
+    const img = container.querySelector(".ship-photo-probe") as HTMLImageElement;
+    fireEvent.error(img);
+    expect(screen.getByText("Photos")).toBeInTheDocument();
+    expect(screen.getByText("Not available")).toBeInTheDocument();
+    expect(container.querySelector(".ship-photo-link")).toBeNull();
+  });
+
+  it("does not render probe image when card is collapsed", () => {
+    const { container } = render(<ShipCard ship={makeShip()} isNearest={false} expanded={false} onToggle={vi.fn()} />);
+    expect(container.querySelector(".ship-photo-probe")).toBeNull();
   });
 });

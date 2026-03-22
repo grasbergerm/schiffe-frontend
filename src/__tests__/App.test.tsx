@@ -58,13 +58,13 @@ describe("location retry button (📍)", () => {
   it("shows the subtitle text at all times", () => {
     setGeolocation(true, "Elbe · Blankenese");
     render(<App />);
-    expect(screen.getByText("Elbe · Blankenese")).toBeInTheDocument();
+    expect(screen.getByText(/Elbe · Blankenese/)).toBeInTheDocument();
   });
 
   it("shows updated subtitle after location is obtained", () => {
     setGeolocation(false, "Elbe · Altona");
     render(<App />);
-    expect(screen.getByText("Elbe · Altona")).toBeInTheDocument();
+    expect(screen.getByText(/Elbe · Altona/)).toBeInTheDocument();
   });
 
   it("calls requestLocation when the button is clicked", async () => {
@@ -88,10 +88,10 @@ describe("location retry button (📍)", () => {
 // ── App structure ─────────────────────────────────────────────────────────────
 
 describe("App structure", () => {
-  it("renders the title Schiffe", () => {
+  it("renders the location name in the status bar", () => {
     setGeolocation(false);
     render(<App />);
-    expect(screen.getByText("Schiffe")).toBeInTheDocument();
+    expect(screen.getByText(/Elbe · Blankenese/)).toBeInTheDocument();
   });
 
   it("shows loading state before first data arrives", () => {
@@ -99,13 +99,6 @@ describe("App structure", () => {
     vi.mocked(useShips).mockReturnValue({ ships: [], meta: null, isLoading: true, error: null });
     render(<App />);
     expect(screen.getByText("Loading…")).toBeInTheDocument();
-  });
-
-  it("hides 👁 watch button when there are no ships (kills ships.length > 0 → >= or true)", () => {
-    setGeolocation(false);
-    vi.mocked(useShips).mockReturnValue({ ships: [], meta: null, isLoading: false, error: null });
-    render(<App />);
-    expect(screen.queryByText("👁")).not.toBeInTheDocument();
   });
 
   it("does NOT show error state when isLoading=true but meta is already present (kills neverLoaded || mutation)", () => {
@@ -132,71 +125,6 @@ describe("App structure", () => {
     });
     render(<App />);
     expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
-  });
-});
-
-// ── watch mode ────────────────────────────────────────────────────────────────
-
-describe("watch mode", () => {
-  it("shows watch button when ships exist", () => {
-    setGeolocation(false);
-    vi.mocked(useShips).mockReturnValue({
-      ships: [{
-        mmsi: 123456789, name: "ELBE STAR", shipType: 70,
-        lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
-        navStatus: null, destination: null, length: null, width: null,
-        distance: 1.5, lastUpdate: new Date().toISOString(),
-      }],
-      meta: { count: 1, updatedAt: new Date().toISOString(), connected: true },
-      isLoading: false,
-      error: null,
-    });
-    render(<App />);
-    expect(screen.getByText("👁")).toBeInTheDocument();
-  });
-
-  it("enters watch mode when watch button is clicked", async () => {
-    setGeolocation(false);
-    const ship = {
-      mmsi: 123456789, name: "WATCH VESSEL", shipType: 70,
-      lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
-      navStatus: null, destination: null, length: null, width: null,
-      distance: 1.5, lastUpdate: new Date().toISOString(),
-    };
-    vi.mocked(useShips).mockReturnValue({
-      ships: [ship],
-      meta: { count: 1, updatedAt: new Date().toISOString(), connected: true },
-      isLoading: false,
-      error: null,
-    });
-    render(<App />);
-    await userEvent.click(screen.getByText("👁"));
-    // Should now show WatchMode with the ship name
-    expect(screen.getByText("WATCH VESSEL")).toBeInTheDocument();
-    // Close button should be visible
-    expect(screen.getByText("✕")).toBeInTheDocument();
-  });
-
-  it("exits watch mode when close button is clicked", async () => {
-    setGeolocation(false);
-    const ship = {
-      mmsi: 123456789, name: "WATCH VESSEL", shipType: 70,
-      lat: 53.5565, lon: 9.8063, speed: 5.2, heading: 180,
-      navStatus: null, destination: null, length: null, width: null,
-      distance: 1.5, lastUpdate: new Date().toISOString(),
-    };
-    vi.mocked(useShips).mockReturnValue({
-      ships: [ship],
-      meta: { count: 1, updatedAt: new Date().toISOString(), connected: true },
-      isLoading: false,
-      error: null,
-    });
-    render(<App />);
-    await userEvent.click(screen.getByText("👁"));
-    expect(screen.getByText("✕")).toBeInTheDocument();
-    await userEvent.click(screen.getByText("✕"));
-    // Back to normal view — title should be visible again
-    expect(screen.getByText("Schiffe")).toBeInTheDocument();
   });
 });
 

@@ -4,14 +4,12 @@ import { useShips } from "./hooks/useShips";
 import { StatusBar } from "./components/StatusBar";
 import { FilterBar } from "./components/FilterBar";
 import { ShipList } from "./components/ShipList";
-import { WatchMode } from "./components/WatchMode";
 import { ErrorState } from "./components/ErrorState";
 import { MapCanvas } from "./components/MapCanvas";
 
 export default function App() {
   const [filter, setFilter] = useState("all");
   const [movingOnly, setMovingOnly] = useState(false);
-  const [watchMode, setWatchMode] = useState(false);
   const [flipped, setFlipped] = useState(false);
   const [rotation, setRotation] = useState(0);
   const dragX      = useRef<number | null>(null);
@@ -49,13 +47,16 @@ export default function App() {
 
   if (neverLoaded && error) return <ErrorState />;
 
-  if (watchMode && ships[0]) {
-    return <WatchMode ship={ships[0]} onClose={() => setWatchMode(false)} />;
-  }
-
   return (
     <>
-      <StatusBar meta={meta} error={error} shipCount={ships.length} />
+      <StatusBar
+        meta={meta}
+        error={error}
+        shipCount={ships.length}
+        locationName={locationName}
+        isDefaultLocation={isDefaultLocation}
+        onRequestLocation={requestLocation}
+      />
       <div className="layout">
         <div
           className="map-pane"
@@ -85,31 +86,6 @@ export default function App() {
           <span className="map-rotate-hint">← drag to rotate →</span>
         </div>
         <div className="list-pane">
-          <header className="header">
-            <div className="header-row">
-              <h1 className="title">Schiffe</h1>
-              {ships.length > 0 && (
-                <button className="watch-btn" onClick={() => setWatchMode(true)}>
-                  👁
-                </button>
-              )}
-            </div>
-            <span className="subtitle-row">
-              <p className="subtitle">{locationName}</p>
-              {isDefaultLocation && navigator.geolocation && (
-                <button className="location-btn" onClick={requestLocation} title="Use my location">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ display: 'block' }}>
-                    <line x1="12" y1="2"  x2="12" y2="6"  stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-                    <line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-                    <line x1="2"  y1="12" x2="6"  y2="12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-                    <line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-                    <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" strokeWidth="2.5"/>
-                    <circle cx="12" cy="12" r="3.5"/>
-                  </svg>
-                </button>
-              )}
-            </span>
-          </header>
           <FilterBar
             active={filter}
             onChange={setFilter}

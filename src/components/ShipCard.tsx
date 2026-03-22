@@ -1,4 +1,4 @@
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useState, useEffect } from "react";
 import type { ShipData } from "../types";
 import { getShipTypeInfo } from "../utils/shipTypes";
 import { formatDistance, formatSpeed, formatRelativeTime, getDirection } from "../utils/format";
@@ -17,6 +17,13 @@ interface Props {
 export const ShipCard = memo(forwardRef<HTMLDivElement, Props>(function ShipCard({ ship, isNearest, expanded, onToggle }: Props, ref) {
   const typeInfo = getShipTypeInfo(ship.shipType);
   const direction = getDirection(ship.heading);
+
+  const [photoStatus, setPhotoStatus] = useState<'loading' | 'found' | 'notfound'>('loading');
+  const probeUrl = `https://photos.marinetraffic.com/ais/showphoto.aspx?mmsi=${ship.mmsi}`;
+
+  useEffect(() => {
+    if (!expanded) setPhotoStatus('loading');
+  }, [expanded]);
   const flag = flagFromMmsi(ship.mmsi);
   const country = countryFromMmsi(ship.mmsi);
   const status = navStatusLabel(ship.navStatus);
@@ -52,6 +59,14 @@ export const ShipCard = memo(forwardRef<HTMLDivElement, Props>(function ShipCard
 
       {expanded && (
         <div className="ship-card-details">
+          <img
+            className="ship-photo-probe"
+            src={probeUrl}
+            alt=""
+            aria-hidden="true"
+            onLoad={() => setPhotoStatus('found')}
+            onError={() => setPhotoStatus('notfound')}
+          />
           <div className="detail-row">
             <span className="detail-label">Type</span>
             <span className="detail-value">{typeInfo.label}</span>
@@ -91,6 +106,23 @@ export const ShipCard = memo(forwardRef<HTMLDivElement, Props>(function ShipCard
             <span className="detail-label">MMSI</span>
             <span className="detail-value mono">{ship.mmsi}</span>
           </div>
+          {photoStatus !== 'loading' && (
+            <div className="detail-row">
+              <span className="detail-label">Photos</span>
+              {photoStatus === 'found' ? (
+                <a
+                  className="ship-photo-link"
+                  href={probeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="View ship photos on MarineTraffic"
+                  onClick={(e) => e.stopPropagation()}
+                >📷</a>
+              ) : (
+                <span className="detail-value">Not available</span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

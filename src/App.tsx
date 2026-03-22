@@ -30,7 +30,7 @@ export default function App() {
     dragX.current = e.clientX;
     dragAccum.current += delta * 0.5;
     if (wrapperRef.current) {
-      wrapperRef.current.style.transform = `rotate(${-dragAccum.current}deg)`;
+      wrapperRef.current.style.transform = `rotate(${dragAccum.current}deg)`;
     }
   };
   const handlePointerUp = () => {

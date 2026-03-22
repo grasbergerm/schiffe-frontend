@@ -11,6 +11,7 @@ const mockRequestLocation = vi.fn();
 
 vi.mock("../hooks/useGeolocation");
 vi.mock("../hooks/useShips");
+vi.mock("../components/MapCanvas", () => ({ MapCanvas: () => null }));
 
 const defaultShips = {
   ships: [],

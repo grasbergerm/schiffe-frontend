@@ -10,7 +10,9 @@ class MockEventSource {
   onerror: ((e: Event) => void) | null = null;
   close = vi.fn();
 
-  constructor(public url: string) {
+  url: string;
+  constructor(url: string) {
+    this.url = url;
     MockEventSource.instances.push(this);
   }
 

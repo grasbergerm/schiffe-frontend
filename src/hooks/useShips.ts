@@ -26,7 +26,12 @@ export function useShips(filter: string, location: Location, movingOnly: boolean
     );
 
     source.onmessage = (event) => {
-      const data: ApiResponse = JSON.parse(event.data);
+      let data: ApiResponse;
+      try {
+        data = JSON.parse(event.data);
+      } catch {
+        return;
+      }
       hasEverLoaded.current = true;
       setShips(data.ships);
       setMeta(data.meta);

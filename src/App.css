@@ -54,6 +54,10 @@ body {
   color: var(--text-primary);
   font-size: 14px;
   line-height: 1.5;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .mono {
@@ -61,18 +65,92 @@ body {
 }
 
 /* ── Layout ── */
-.app {
-  max-width: 640px;
-  margin: 0 auto;
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.map-pane {
+  flex-shrink: 0;
+  width: 60%;
+  position: relative;
+  background: #050d14;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  cursor: grab;
+}
+.map-pane:active {
+  cursor: grabbing;
+}
+
+.map-rotate-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: #1a7a9c;
+  font-size: 11px;
+  font-family: monospace;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.map-north-btn,
+.map-flip-btn {
+  position: absolute;
+  bottom: 10px;
+  background: #050d14;
+  border: 1px solid #1a3a5c;
+  border-radius: 4px;
+  color: #1a7a9c;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: border-color 0.1s, color 0.1s;
+}
+
+.map-north-btn {
+  right: 48px;
+}
+
+.map-flip-btn {
+  right: 10px;
+}
+
+.map-north-btn:hover,
+.map-flip-btn:hover {
+  border-color: #00ccff;
+  color: #00ccff;
+}
+
+.list-pane {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   padding: 0 16px;
-  min-height: 100vh;
 }
 
 /* ── Status Bar ── */
 .status-bar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -207,6 +285,9 @@ body {
 
 /* ── Ship List ── */
 .ship-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 0 0 40px;
   display: flex;
   flex-direction: column;

@@ -42,6 +42,7 @@ export function WatchMode({ ship, onClose }: Props) {
         className="watch-mode-photo-probe"
         src={probeUrl}
         alt=""
+        aria-hidden="true"
         onLoad={() => setPhotoStatus('found')}
         onError={() => setPhotoStatus('notfound')}
       />

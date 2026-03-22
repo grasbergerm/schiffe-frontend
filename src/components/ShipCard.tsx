@@ -1,3 +1,4 @@
+import { forwardRef, memo } from "react";
 import type { ShipData } from "../types";
 import { getShipTypeInfo } from "../utils/shipTypes";
 import { formatDistance, formatSpeed, formatRelativeTime, getDirection } from "../utils/format";
@@ -13,7 +14,7 @@ interface Props {
   onToggle: () => void;
 }
 
-export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
+export const ShipCard = memo(forwardRef<HTMLDivElement, Props>(function ShipCard({ ship, isNearest, expanded, onToggle }: Props, ref) {
   const typeInfo = getShipTypeInfo(ship.shipType);
   const direction = getDirection(ship.heading);
   const flag = flagFromMmsi(ship.mmsi);
@@ -24,6 +25,7 @@ export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
 
   return (
     <div
+      ref={ref}
       className={`ship-card${isNearest ? " ship-card-nearest" : ""}${expanded ? " ship-card-expanded" : ""}`}
       onClick={onToggle}
     >
@@ -93,4 +95,17 @@ export function ShipCard({ ship, isNearest, expanded, onToggle }: Props) {
       )}
     </div>
   );
-}
+}), (prev, next) =>
+  prev.isNearest        === next.isNearest        &&
+  prev.expanded         === next.expanded          &&
+  prev.ship.name        === next.ship.name         &&
+  prev.ship.shipType    === next.ship.shipType      &&
+  prev.ship.heading     === next.ship.heading       &&
+  prev.ship.speed       === next.ship.speed         &&
+  prev.ship.distance    === next.ship.distance      &&
+  prev.ship.navStatus   === next.ship.navStatus     &&
+  prev.ship.destination === next.ship.destination   &&
+  prev.ship.lastUpdate  === next.ship.lastUpdate    &&
+  prev.ship.length      === next.ship.length        &&
+  prev.ship.width       === next.ship.width
+)

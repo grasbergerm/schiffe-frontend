@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { ShipData } from "../types";
 import { ShipCard } from "./ShipCard";
 
@@ -8,6 +8,7 @@ interface Props {
 
 export function ShipList({ ships }: Props) {
   const [expandedMmsi, setExpandedMmsi] = useState<number | null>(null);
+  const cardRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
   if (ships.length === 0) {
     return <p className="empty-state">No ships in range.</p>;
@@ -21,6 +22,10 @@ export function ShipList({ ships }: Props) {
         return (
           <ShipCard
             key={ship.mmsi}
+            ref={(el) => {
+              if (el) cardRefs.current.set(ship.mmsi, el);
+              else cardRefs.current.delete(ship.mmsi);
+            }}
             ship={ship}
             isNearest={isNearest}
             expanded={isExpanded}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Location { lat: number; lon: number; }
 
@@ -48,6 +48,7 @@ export function useGeolocation(): UseGeolocationReturn {
   const [location, setLocation] = useState<Location>(BLANKENESE);
   const [locationName, setLocationName] = useState(BLANKENESE_NAME);
   const [isDefaultLocation, setIsDefaultLocation] = useState(true);
+  const didAutoRequest = useRef(false);
 
   function requestLocation() {
     if (!navigator.geolocation) return;
@@ -86,6 +87,8 @@ export function useGeolocation(): UseGeolocationReturn {
   }
 
   useEffect(() => {
+    if (didAutoRequest.current) return;
+    didAutoRequest.current = true;
     requestLocation();
   }, []);
 

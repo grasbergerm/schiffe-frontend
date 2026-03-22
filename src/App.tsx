@@ -64,7 +64,7 @@ export default function App() {
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
         >
-          <div ref={wrapperRef} style={{ position: 'absolute', inset: 0 }}>
+          <div ref={wrapperRef} style={{ position: 'absolute', inset: '-20.9375%' }}>
             <MapCanvas
               lat={location.lat}
               lon={location.lon}

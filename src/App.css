@@ -108,7 +108,8 @@ body {
   position: absolute;
   bottom: 10px;
   left: 10px;
-  color: var(--map-accent);
+  color: #444;
+  text-shadow: 0 0 4px rgba(0,0,0,0.6);
   font-size: 11px;
   font-family: monospace;
   pointer-events: none;
@@ -121,9 +122,10 @@ body {
   position: absolute;
   bottom: 10px;
   background: var(--map-bg);
-  border: 1px solid var(--map-water);
+  border: 1px solid #444;
   border-radius: 4px;
-  color: var(--map-accent);
+  color: #444;
+  text-shadow: 0 0 4px rgba(0,0,0,0.6);
   font-size: 14px;
   line-height: 1;
   padding: 0;
@@ -149,6 +151,19 @@ body {
 .map-flip-btn:hover {
   border-color: var(--map-accent-hover);
   color: var(--map-accent-hover);
+}
+
+@media (prefers-color-scheme: dark) {
+  .map-rotate-hint {
+    color: #bbb;
+    text-shadow: 0 0 4px rgba(255,255,255,0.6);
+  }
+  .map-north-btn,
+  .map-flip-btn {
+    color: #bbb;
+    border-color: #bbb;
+    text-shadow: 0 0 4px rgba(255,255,255,0.6);
+  }
 }
 
 .list-pane {

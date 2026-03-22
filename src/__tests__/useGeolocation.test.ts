@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useGeolocation } from "../hooks/useGeolocation";
@@ -250,6 +251,27 @@ describe("requestLocation", () => {
 
     act(() => { result.current.requestLocation(); });
     expect(getCurrentPosition).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not overwrite waterway when StrictMode double-fires the effect", async () => {
+    mockGeoSuccess(53.56, 9.81);
+
+    let overpassCallCount = 0;
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (String(url).includes("nominatim")) return nominatimResponse("Altona");
+      overpassCallCount++;
+      // First Overpass call: waterway found
+      if (overpassCallCount === 1) return overpassResponse("Elbe");
+      // Second Overpass call: rate-limited / empty (simulates StrictMode second fire)
+      return Promise.resolve(new Response(JSON.stringify({ elements: [] }), { status: 200 }));
+    }));
+
+    const { result } = renderHook(() => useGeolocation(), { wrapper: StrictMode });
+
+    await waitFor(() => expect(result.current.locationName).not.toBe("Elbe · Blankenese"));
+
+    // Should preserve the waterway — not be overwritten by the rate-limited second call
+    expect(result.current.locationName).toBe("Elbe · Altona");
   });
 
   it("updates location and clears isDefaultLocation after manual retry succeeds", async () => {

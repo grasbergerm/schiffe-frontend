@@ -9,7 +9,6 @@ interface Props {
   bearing: number
 }
 
-const GRID = 160
 
 const API_URL = (import.meta as { env: Record<string, string> }).env.VITE_API_URL ?? 'http://localhost:3000'
 
@@ -94,18 +93,19 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
     }
 
     const angle = (bearing + (flipped ? 180 : 0)) % 360
-    const rotated = rotateGrid(grid, angle, GRID)
+    const gridSize = grid.length
+    const rotated = rotateGrid(grid, angle, gridSize)
 
     ctx.fillStyle = colors.bg
     ctx.fillRect(0, 0, w, h)
 
-    const cellW = w / GRID
-    const cellH = h / GRID
+    const cellW = w / gridSize
+    const cellH = h / gridSize
     const dotW  = cellW * 0.65
     const dotH  = cellH * 0.65
 
-    for (let row = 0; row < GRID; row++) {
-      for (let col = 0; col < GRID; col++) {
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
         const cell = rotated[row][col]
         if (cell === null) continue
         ctx.fillStyle = cell === 'water' ? colors.water : colors.land
@@ -119,8 +119,8 @@ export function MapCanvas({ lat, lon, flipped, bearing }: Props) {
     }
 
     // Self-position crosshair at center
-    const selfCol = Math.floor(GRID / 2)
-    const selfRow = Math.floor(GRID / 2)
+    const selfCol = Math.floor(gridSize / 2)
+    const selfRow = Math.floor(gridSize / 2)
     const selfX   = selfCol * cellW + (cellW - dotW) / 2
     const selfY   = selfRow * cellH + (cellH - dotH) / 2
     const selfCx  = selfCol * cellW + cellW / 2
